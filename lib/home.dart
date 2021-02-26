@@ -30,6 +30,12 @@ class _HomePageState extends State<HomePage> {
   loadModel() async {
     String res;
     switch (_model) {
+      case liveness:
+        res = await Tflite.loadModel(
+          model: "assets/liveness.tflite",
+          labels: "assets/liveness.txt",
+        );
+        break;
       case yolo:
         res = await Tflite.loadModel(
           model: "assets/yolov2_tiny.tflite",
@@ -81,6 +87,10 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
+                    child: const Text(liveness),
+                    onPressed: () => onSelect(liveness),
+                  ),
+                  RaisedButton(
                     child: const Text(ssd),
                     onPressed: () => onSelect(ssd),
                   ),
@@ -105,14 +115,15 @@ class _HomePageState extends State<HomePage> {
                   widget.cameras,
                   _model,
                   setRecognitions,
+                  _recognitions,
                 ),
-                BndBox(
+                _model != liveness ? BndBox(
                     _recognitions == null ? [] : _recognitions,
                     math.max(_imageHeight, _imageWidth),
                     math.min(_imageHeight, _imageWidth),
                     screen.height,
                     screen.width,
-                    _model),
+                    _model) : Container(),
               ],
             ),
     );

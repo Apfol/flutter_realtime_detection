@@ -11,8 +11,9 @@ class Camera extends StatefulWidget {
   final List<CameraDescription> cameras;
   final Callback setRecognitions;
   final String model;
+  final List<dynamic> results;
 
-  Camera(this.cameras, this.model, this.setRecognitions);
+  Camera(this.cameras, this.model, this.setRecognitions, this.results);
 
   @override
   _CameraState createState() => new _CameraState();
@@ -45,7 +46,7 @@ class _CameraState extends State<Camera> {
 
             int startTime = new DateTime.now().millisecondsSinceEpoch;
 
-            if (widget.model == mobilenet) {
+            if (widget.model == mobilenet || widget.model == liveness) {
               Tflite.runModelOnFrame(
                 bytesList: img.planes.map((plane) {
                   return plane.bytes;
@@ -56,6 +57,7 @@ class _CameraState extends State<Camera> {
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 print("Detection took ${endTime - startTime}");
+                print("Recognitions: ${recognitions.toString()}");
 
                 widget.setRecognitions(recognitions, img.height, img.width);
 
